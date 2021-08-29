@@ -6,7 +6,7 @@ Powiadomienia o transmisjach Xayoo Industries.
 # Helpful
 
 Report bug or submit ideas
-[Github.com/4uss/BetterBrime/issues](https://github.com/4uss/XI-Powiadomienia/issues)
+[Github.com/4uss/XI-Powiadomienia/issues](https://github.com/4uss/XI-Powiadomienia/issues)
 
 # Download
  
@@ -17,7 +17,7 @@ Report bug or submit ideas
  Edge Web store [microsoftedge.microsoft.com/addons/detail/mnkjeicdpfhcilendgodedpchkccfejn](https://microsoftedge.microsoft.com/addons/detail/mnkjeicdpfhcilendgodedpchkccfejn)
 
 # Support & Issues
-<b>IMPORTANT</b>: Help me beeing efficient, please! I am developing BetterBrime in my free time for no money. Contribute to the project by posting complete, structured and helpful issues which I can reproduce quickly without asking for missing information.
+<b>IMPORTANT</b>: Help me beeing efficient, please! I am developing XI-Powiadomienia in my free time for no money. Contribute to the project by posting complete, structured and helpful issues which I can reproduce quickly without asking for missing information.
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Y8Y85DDFG)
 
