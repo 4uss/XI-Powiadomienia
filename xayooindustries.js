@@ -141,7 +141,7 @@ function zapytajLive(nick, status, thumbnail, title, displayname){
                 if(xayoo !== 1){
                     xayoo = 1;
                     console.log('Xayoo set 1')
-                    streamLive(displayname, thumbnail, title);
+                    streamLive(displayname, thumbnail, title, nick);
                 }
             }
         }
@@ -156,7 +156,7 @@ function zapytajLive(nick, status, thumbnail, title, displayname){
             }else if(status == "true"){
                 if(suchar !== 1){
                     suchar = 1;
-                    streamLive(displayname, thumbnail, title);
+                    streamLive(displayname, thumbnail, title, nick);
                 }
             }
         }
@@ -171,7 +171,7 @@ function zapytajLive(nick, status, thumbnail, title, displayname){
             }else if(status == "true"){
                 if(japczan !== 1){
                     japczan = 1;
-                    streamLive(displayname, thumbnail, title);
+                    streamLive(displayname, thumbnail, title, nick);
                 }
             }
         }
@@ -186,7 +186,7 @@ function zapytajLive(nick, status, thumbnail, title, displayname){
         }else if(status == "true"){
             if(popo !== 1){
                 popo = 1;
-                streamLive(displayname, thumbnail, title);
+                streamLive(displayname, thumbnail, title, nick);
             }
         }
     }
@@ -201,7 +201,7 @@ function zapytajLive(nick, status, thumbnail, title, displayname){
         }else if(status == "true"){
             if(paramaxil !== 1){
                 paramaxil = 1;
-                streamLive(displayname, thumbnail, title);
+                streamLive(displayname, thumbnail, title, nick);
             }
         }
     }
@@ -216,7 +216,7 @@ function zapytajLive(nick, status, thumbnail, title, displayname){
         }else if(status == "true"){
             if(lukisteve !== 1){
                 lukisteve = 1;
-                streamLive(displayname, thumbnail, title);
+                streamLive(displayname, thumbnail, title, nick);
             }
         }
     }
@@ -231,7 +231,7 @@ function zapytajLive(nick, status, thumbnail, title, displayname){
         }else if(status == "true"){
             if(holak !== 1){
                 holak = 1;
-                streamLive(displayname, thumbnail, title);
+                streamLive(displayname, thumbnail, title, nick);
             }
         }
     }
@@ -246,7 +246,7 @@ function zapytajLive(nick, status, thumbnail, title, displayname){
         }else if(status == "true"){
             if(aki !== 1){
                 aki = 1;
-                streamLive(displayname, thumbnail, title);
+                streamLive(displayname, thumbnail, title, nick);
             }
         }
     }
@@ -261,7 +261,7 @@ function zapytajLive(nick, status, thumbnail, title, displayname){
         }else if(status == "true"){
             if(vysotzky !== 1){
                 vysotzky = 1;
-                streamLive(displayname, thumbnail, title);
+                streamLive(displayname, thumbnail, title, nick);
             }
         }
     }
@@ -276,18 +276,19 @@ function zapytajLive(nick, status, thumbnail, title, displayname){
         }else if(status == "true"){
             if(matixoxoo !== 1){
                 matixoxoo = 1;
-                streamLive(displayname, thumbnail, title);
+                streamLive(displayname, thumbnail, title, nick);
             }
         }
     }}
     setInterval(check, 60*1000);
     
-    function streamLive(displayname, thumbnail, title) {
-
-      io.sockets.emit('xd-a', {
+    function streamLive(displayname, thumbnail, title, nick) {
+        
+      io.sockets.emit('XI_Alert', {
         stream: displayname,
         thumbnail: thumbnail,
-        title: title
+        title: title,
+        channel_id: nick
       });
 
       io.sockets.emit('xd', {streams: onlineStreams()});
