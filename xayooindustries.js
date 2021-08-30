@@ -10,7 +10,7 @@ var lastInitLogin = 0;
 /*--------------------------------------------------------------------------------------------
                                             STATUS
 ---------------------------------------------------------------------------------------------*/
-var xayoo = 0;
+var xayoo = 1;
 var suchar = 0;
 var japczan = 0;
 var popo = 0;
@@ -22,6 +22,9 @@ var vysotzky = 0;
 var dejvid = 0;
 var matixoxoo = 0;
 
+setInterval(() => {
+    console.log(xayoo)
+}, 5000);
 function onlineStreams(){
     return `{"follows":[
         {
@@ -110,10 +113,9 @@ function zapytaj(id, nick){
 
     axios.get(`https://api.twitch.tv/kraken/streams/${id}`, options).then(
         (response) => {
-            if(!response.data.stream) return;
             var data = response.data;
 
-            if(response.data.stream === null){
+            if(response.data.stream === null || !response.data.stream){
                 zapytajLive(nick, 'false');
             }else{
                 zapytajLive(nick, 'true', data.stream.preview.large, data.stream.channel.status, data.stream.channel.display_name);
@@ -132,6 +134,7 @@ function zapytajLive(nick, status, thumbnail, title, displayname){
         XAYOO
     -------------*/
         if(nick === 'xayoo'){
+            console.log(status)
             if(status == "false"){
                 if(xayoo !== 0){
                     xayoo = 0;
