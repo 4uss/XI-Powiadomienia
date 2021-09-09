@@ -9,8 +9,10 @@
   "author": "xanax",
   "license": "ISC",
   "dependencies": {
+    "@3xanax/youtube-stream-status": "^1.0.2",
     "axios": "^0.21.1",
     "express": "^4.17.1",
+    "geoip-lite": "^1.4.2",
     "nodemon": "^1.19.1",
     "socket.io": "^2.3.0"
   }

@@ -8,8 +8,7 @@ module.exports = {
     holak: '32054323',
     aki: '86177954',
     vysotzky: '96308352',
-    matixoxoo: '271729372',
+    ile_lat_ma_xayoo: '153901266',
     xqc: '71092938',
-    youtubeKey: 'AIzaSyCDWKFZOZ_0799w_YTegSwQTt610QsLc0M',
-    youtubeId: 'UCi0kC_2fp41TamIC_sIW0kQ'
+    dejvid: 'UCi0kC_2fp41TamIC_sIW0kQ',
   };

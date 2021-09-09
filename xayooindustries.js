@@ -3,6 +3,8 @@ const globalConfig = require('./config/config.js');
 var app = require('express')();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
+var geoip = require('geoip-lite');
+const yt = require('@3xanax/youtube-stream-status');
 
 var port = process.env.PORT || 3000
 var users = [];
@@ -10,21 +12,17 @@ var lastInitLogin = 0;
 /*--------------------------------------------------------------------------------------------
                                             STATUS
 ---------------------------------------------------------------------------------------------*/
-var xayoo = 1;
+var xayoo = 0;
 var suchar = 0;
 var japczan = 0;
 var popo = 0;
-var paramaxil = 0;
 var lukisteve = 0;
 var holak = 0;
 var aki = 0;
 var vysotzky = 0;
 var dejvid = 0;
-var matixoxoo = 0;
+var ile_lat_ma_xayoo = 0;
 
-setInterval(() => {
-    console.log(xayoo)
-}, 5000);
 function onlineStreams(){
     return `{"follows":[
         {
@@ -46,11 +44,6 @@ function onlineStreams(){
             "STATUS": ${popo}, 
             "CHANNEL_ID": "popo", 
             "TWITCH" : "popo"
-        }, 
-        {
-            "STATUS": ${paramaxil}, 
-            "CHANNEL_ID": "paramaxil", 
-            "TWITCH" : "paramaxil"
         }, 
         {
             "STATUS": ${lukisteve}, 
@@ -75,12 +68,13 @@ function onlineStreams(){
         {
             "STATUS": ${dejvid}, 
             "CHANNEL_ID": "dejvid", 
-            "TWITCH" : "dejvid"
+            "TWITCH" : "dejvid",
+            "PLATFORM": "YouTube"
         }, 
         {
-            "STATUS": ${matixoxoo}, 
-            "CHANNEL_ID": "matixoxoo", 
-            "TWITCH" : "matixoxoo_"
+            "STATUS": ${ile_lat_ma_xayoo}, 
+            "CHANNEL_ID": "ile_lat_ma_xayoo", 
+            "TWITCH" : "ile_lat_ma_xayoo"
         }]}`;
 }
 /*--------------------------------------------------------------------------------------------
@@ -91,12 +85,12 @@ function check(){
     zapytaj(globalConfig.suchar, 'suchar')
     zapytaj(globalConfig.japczan, 'japczan')
     zapytaj(globalConfig.popo, 'popo')
-    //zapytaj(globalConfig.paramaxil, 'paramaxil')
+    zapytajYouTube(globalConfig.dejvid, 'dejvid', 'https://cdn.beyondlabs.pl/XI/XI-dejvid_live.png', 'www.youtube.com/c/dejvidtibijskizadymiarz', 'dejvid tibijski zadymiarz')
     zapytaj(globalConfig.lukisteve, 'lukisteve')
     zapytaj(globalConfig.holak, 'holak')
     zapytaj(globalConfig.aki, 'aki')
     zapytaj(globalConfig.vysotzky, 'vysotzky')
-    zapytaj(globalConfig.matixoxoo, 'matixoxoo')
+    zapytaj(globalConfig.ile_lat_ma_xayoo, 'ile_lat_ma_xayoo')
 }
 /*--------------------------------------------------------------------------------------------
                                         DANE OD TTV
@@ -125,6 +119,20 @@ function zapytaj(id, nick){
             console.log(error);
         }
     );
+}
+/*--------------------------------------------------------------------------------------------
+                                        DANE OD TTV
+---------------------------------------------------------------------------------------------*/
+function zapytajYouTube(id, nick, thumbnail, title, displayname){
+
+    yt.getStream(id)
+    .then(data => {
+        if(!data.stream || data.stream === null){
+            zapytajLive(nick, 'false');
+        }else{
+            zapytajLive(nick, 'true', thumbnail, title, displayname);
+        }
+    })
 }
 /*--------------------------------------------------------------------------------------------
                                     Ustawienie STATUSU
@@ -194,17 +202,17 @@ function zapytajLive(nick, status, thumbnail, title, displayname){
         }
     }
     /*-----------
-       PARAMAXIL
+       DEJVID
     -------------*/
-    else if(nick === 'paramaxil'){
+    else if(nick === 'dejvid'){
         if(status == "false"){
-            if(paramaxil !== 0){
-                paramaxil = 0;
+            if(dejvid !== 0){
+                dejvid = 0;
             }
         }else if(status == "true"){
-            if(paramaxil !== 1){
-                paramaxil = 1;
-                streamLive(displayname, thumbnail, title, nick);
+            if(dejvid !== 1){
+                dejvid = 1;
+                streamLive(displayname, thumbnail, title, nick, 'YouTube', globalConfig.dejvid);
             }
         }
     }
@@ -269,29 +277,31 @@ function zapytajLive(nick, status, thumbnail, title, displayname){
         }
     }
     /*-----------
-       MATIXOXOO
+       ile_lat_ma_xayoo
     -------------*/
-    else if(nick === 'matixoxoo'){
+    else if(nick === 'ile_lat_ma_xayoo'){
         if(status == "false"){
-            if(matixoxoo !== 0){
-                matixoxoo = 0;
+            if(ile_lat_ma_xayoo !== 0){
+                ile_lat_ma_xayoo = 0;
             }
         }else if(status == "true"){
-            if(matixoxoo !== 1){
-                matixoxoo = 1;
+            if(ile_lat_ma_xayoo !== 1){
+                ile_lat_ma_xayoo = 1;
                 streamLive(displayname, thumbnail, title, nick);
             }
         }
     }}
     setInterval(check, 60*1000);
     
-    function streamLive(displayname, thumbnail, title, nick) {
+    function streamLive(displayname, thumbnail, title, nick, platform, ytchannelID) {
         
       io.sockets.emit('XI_Alert', {
         stream: displayname,
         thumbnail: thumbnail,
         title: title,
-        channel_id: nick
+        channel_id: nick,
+        platform: platform,
+        ytchannelID: ytchannelID
       });
 
       io.sockets.emit('xd', {streams: onlineStreams()});
@@ -302,7 +312,11 @@ function zapytajLive(nick, status, thumbnail, title, displayname){
 io.on('connection', function (socket) {
 
     var $ipAddress = socket.handshake.headers['x-forwarded-for'];
-  
+
+    if(geoip.lookup($ipAddress).country !== 'PL'){
+        socket.emit('XI_NOT_POLAND', { request: true });
+    }
+
     if (!users.hasOwnProperty($ipAddress)) {
   
         users[$ipAddress] = 1;
