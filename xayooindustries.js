@@ -21,7 +21,7 @@ var holak = 0;
 var aki = 0;
 var vysotzky = 0;
 var dejvid = 0;
-var ile_lat_ma_xayoo = 0;
+var mlodziutki7 = 0;
 
 function onlineStreams(){
     return `{"follows":[
@@ -72,9 +72,9 @@ function onlineStreams(){
             "PLATFORM": "YouTube"
         }, 
         {
-            "STATUS": ${ile_lat_ma_xayoo}, 
-            "CHANNEL_ID": "ile_lat_ma_xayoo", 
-            "TWITCH" : "ile_lat_ma_xayoo"
+            "STATUS": ${mlodziutki7}, 
+            "CHANNEL_ID": "mlodziutki7", 
+            "TWITCH" : "mlodziutki7"
         }]}`;
 }
 /*--------------------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ function check(){
     zapytaj(globalConfig.holak, 'holak')
     zapytaj(globalConfig.aki, 'aki')
     zapytaj(globalConfig.vysotzky, 'vysotzky')
-    zapytaj(globalConfig.ile_lat_ma_xayoo, 'ile_lat_ma_xayoo')
+    zapytaj(globalConfig.mlodziutki7, 'mlodziutki7')
 }
 /*--------------------------------------------------------------------------------------------
                                         DANE OD TTV
@@ -277,16 +277,16 @@ function zapytajLive(nick, status, thumbnail, title, displayname){
         }
     }
     /*-----------
-       ile_lat_ma_xayoo
+       mlodziutki7
     -------------*/
-    else if(nick === 'ile_lat_ma_xayoo'){
+    else if(nick === 'mlodziutki7'){
         if(status == "false"){
-            if(ile_lat_ma_xayoo !== 0){
-                ile_lat_ma_xayoo = 0;
+            if(mlodziutki7 !== 0){
+                mlodziutki7 = 0;
             }
         }else if(status == "true"){
-            if(ile_lat_ma_xayoo !== 1){
-                ile_lat_ma_xayoo = 1;
+            if(mlodziutki7 !== 1){
+                mlodziutki7 = 1;
                 streamLive(displayname, thumbnail, title, nick);
             }
         }
