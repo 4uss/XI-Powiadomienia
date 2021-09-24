@@ -14,8 +14,6 @@ Report bug or submit ideas
 
  Firefox Web store [addons.mozilla.org/firefox/addon/xayooindustries-powiadomienia](https://addons.mozilla.org/pl/firefox/addon/xayooindustries-powiadomienia/)
 
- Edge Web store [microsoftedge.microsoft.com/addons/detail/mnkjeicdpfhcilendgodedpchkccfejn](https://microsoftedge.microsoft.com/addons/detail/mnkjeicdpfhcilendgodedpchkccfejn)
-
 # Support & Issues
 <b>IMPORTANT</b>: Help me beeing efficient, please! I am developing XI-Powiadomienia in my free time for no money. Contribute to the project by posting complete, structured and helpful issues which I can reproduce quickly without asking for missing information.
 
