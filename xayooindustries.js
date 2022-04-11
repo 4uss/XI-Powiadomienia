@@ -3,12 +3,10 @@ const globalConfig = require('./config/config.js');
 var app = require('express')();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
-var geoip = require('geoip-lite');
 const yt = require('@3xanax/youtube-stream-status');
 
 var port = process.env.PORT || 3000
 var users = [];
-var lastInitLogin = 0;
 /*--------------------------------------------------------------------------------------------
                                             STATUS
 ---------------------------------------------------------------------------------------------*/
@@ -22,6 +20,11 @@ var aki = 0;
 var vysotzky = 0;
 var dejvid = 0;
 var mlodziutki7 = 0;
+var dejvid_tibijski_zadymiarz = 0;
+
+app.get('/', function (req, res) {
+    res.send(`<!DOCTYPE html><html lang="en"> <head> <meta charset="utf-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" /> <title>BeyondLabs</title> <meta property="og:type" content="website" /> <link rel="icon" type="image/png" sizes="560x560" href="https://cdn.beyondlabs.pl/assets/img/logo512.png" /> <style> @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;400&display=swap'); body{ margin: 0; padding: 0; font-family: 'Roboto', sans-serif; } .bl__box{ height: 100%; width: 100%; position: absolute; text-align: left; display: grid; place-content: center; } h1{ font-weight: 100; color: black !important; } a{ font-weight: 100; color: #565ac6; text-decoration: none; } </style> </head> <body class="bl__box"> <div> <h1>Xayoo Industries Alerts</h1> <h2>Created by <a href="https://beyondlabs.pl/">BeyondLabs.pl</a> <br/>docs - <a href="https://docs.beyondLabs.pl/">docs.beyondLabs.pl</a></h1> </div> </body></html>`)
+})
 
 function onlineStreams(){
     return `{"follows":[
@@ -75,6 +78,11 @@ function onlineStreams(){
             "STATUS": ${mlodziutki7}, 
             "CHANNEL_ID": "mlodziutki7", 
             "TWITCH" : "mlodziutki7"
+        },
+        {
+            "STATUS": ${dejvid_tibijski_zadymiarz}, 
+            "CHANNEL_ID": "dejvid_tibijski_zadymiarz", 
+            "TWITCH" : "dejvid_tibijski_zadymiarz"
         }]}`;
 }
 /*--------------------------------------------------------------------------------------------
@@ -91,28 +99,32 @@ function check(){
     zapytaj(globalConfig.aki, 'aki')
     zapytaj(globalConfig.vysotzky, 'vysotzky')
     zapytaj(globalConfig.mlodziutki7, 'mlodziutki7')
+    zapytaj(globalConfig.dejvid_tibijski_zadymiarz, 'dejvid_tibijski_zadymiarz')
 }
 /*--------------------------------------------------------------------------------------------
                                         DANE OD TTV
 ---------------------------------------------------------------------------------------------*/
 function zapytaj(id, nick){
 
+    //https://id.twitch.tv/oauth2/token?client_id=lx8gmael3hdeg3ttv3avzxrvxwuj3e&client_secret=7pwphyuazyc1venesxfbtgc23nn6rh&grant_type=client_credentials
+    //"expires_in": 5698531
+
     const options = {
         headers: {
-            'Client-ID': 'iykoz4spfmv27zc1apjkxv167e9e01',
-            'Authorization': 'Bearer pwxgmnsj6l5rlp5h8umq8zenn2d1pv',
+            'Client-ID': 'lx8gmael3hdeg3ttv3avzxrvxwuj3e',
+            'Authorization': 'Bearer 7yudwbif3i6ea8virn6t9m98w9w354',
             'Accept': 'application/vnd.twitchtv.v5+json'
         }
     };
 
-    axios.get(`https://api.twitch.tv/kraken/streams/${id}`, options).then(
+    axios.get(`https://api.twitch.tv/helix/streams?user_id=${id}`, options).then(
         (response) => {
-            var data = response.data;
+            var apiResponse = response.data.data[0];
 
-            if(response.data.stream === null || !response.data.stream){
+            if(apiResponse === undefined || !apiResponse){
                 zapytajLive(nick, 'false');
             }else{
-                zapytajLive(nick, 'true', data.stream.preview.large, data.stream.channel.status, data.stream.channel.display_name);
+                zapytajLive(nick, 'true', `https://static-cdn.jtvnw.net/previews-ttv/live_user_${apiResponse.user_login}-1920x1080.jpg`, apiResponse.title, apiResponse.user_name);
             }
         },
         (error) => {
@@ -290,6 +302,21 @@ function zapytajLive(nick, status, thumbnail, title, displayname){
                 streamLive(displayname, thumbnail, title, nick);
             }
         }
+    }
+    /*-----------
+       dejvid_tibijski
+    -------------*/
+    else if(nick === 'dejvid_tibijski_zadymiarz'){
+        if(status == "false"){
+            if(dejvid_tibijski_zadymiarz !== 0){
+                dejvid_tibijski_zadymiarz = 0;
+            }
+        }else if(status == "true"){
+            if(dejvid_tibijski_zadymiarz !== 1){
+                dejvid_tibijski_zadymiarz = 1;
+                streamLive(displayname, thumbnail, title, nick);
+            }
+        }
     }}
     setInterval(check, 60*1000);
     
@@ -313,10 +340,6 @@ io.on('connection', function (socket) {
 
     var $ipAddress = socket.handshake.headers['x-forwarded-for'];
 
-    if(geoip.lookup($ipAddress).country !== 'PL'){
-        socket.emit('XI_NOT_POLAND', { request: true });
-    }
-
     if (!users.hasOwnProperty($ipAddress)) {
   
         users[$ipAddress] = 1;
@@ -338,31 +361,12 @@ io.on('connection', function (socket) {
       
     });
   /*--------------------------------------------------------------------------------------------
-                                            DISCORD
-  ---------------------------------------------------------------------------------------------*/
-  socket.on('catch', (data) => {
-    const ip = socket.handshake.headers['x-forwarded-for'] || socket.conn.remoteAddress.split(":")[3];
-    if (lastInitLogin > (Date.now() - 4000)) {
-      return;
-    }
-    lastInitLogin = Date.now();
-    xayooevery(`» ${data.tresc}\n» ${ip}`);
-  });
-  /*--------------------------------------------------------------------------------------------
                                             STATUS
   ---------------------------------------------------------------------------------------------*/
   socket.on('wedaj', (data) => {
     socket.emit('xd', {streams: onlineStreams() });
   });
 });
-/*--------------------------------------------------------------------------------------------
-                                            FUNKCJE
----------------------------------------------------------------------------------------------*/
-function xayooevery(tresc) {
-  io.sockets.emit('everything', {
-    tresc: tresc
-  });
-}
 http.listen(port, function() {
     console.log('listening on *:3000');
 });
