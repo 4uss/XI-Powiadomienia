@@ -112,7 +112,7 @@ function zapytaj(id, nick){
     const options = {
         headers: {
             'Client-ID': 'lx8gmael3hdeg3ttv3avzxrvxwuj3e',
-            'Authorization': 'Bearer 7yudwbif3i6ea8virn6t9m98w9w354',
+            'Authorization': 'Bearer 17uyhahvbxzpr9s2i31zg5glzb2qj1',
             'Accept': 'application/vnd.twitchtv.v5+json'
         }
     };
@@ -321,6 +321,7 @@ function zapytajLive(nick, status, thumbnail, title, displayname){
     setInterval(check, 60*1000);
     
     function streamLive(displayname, thumbnail, title, nick, platform, ytchannelID) {
+        console.log(displayname)
         
       io.sockets.emit('XI_Alert', {
         stream: displayname,
